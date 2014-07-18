@@ -63,16 +63,22 @@ function check_open(dots){
 	}
 	$("#font_color").html("check_open: "+dots.tag+","+sides)
 	switch(dots.tag){
-		case "#a1":if(sides==2){return 0;} break;
-		case "#a2":if(sides==3){return 0;} break;
-		case "#a3":if(sides==2){return 0;} break;
-		case "#b1":if(sides==3){return 0;} break;
-		case "#b2":if(sides==4){return 0;} break;
-		case "#b3":if(sides==3){return 0;} break;
-		case "#c1":if(sides==2){return 0;} break;
-		case "#c2":if(sides==3){return 0;} break;
-		case "#c3":if(sides==2){return 0;} break;
-		default: return 1;
+		case '#a1':
+		if(sides!=2){
+			return 1;
+			 break;
+		}
+		else{
+			return 0;
+		}
+		case '#a2':if(sides!=3){return 1;break;}else{return 0;}
+		case '#a3':if(sides!=2){return 1;break;}else{return 0;}
+		case '#b1':if(sides!=3){return 1;break;}else{return 0;}
+		case '#b2':if(sides!=4){return 1;break;}else{return 0;}
+		case '#b3':if(sides!=3){return 1;break;}else{return 0;}
+		case '#c1':if(sides!=2){return 1;break;}else{return 0;}
+		case '#c2':if(sides!=3){return 1;break;}else{return 0;}
+		case '#c3':if(sides!=2){return 1;break;}else{return 0;}
 	}
 }
 
