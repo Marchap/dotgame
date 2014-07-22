@@ -1,5 +1,4 @@
-//check ownership of each dot, loss of sustainability with class:availability
-//look @ line 296
+
 
 
 function dot(){
