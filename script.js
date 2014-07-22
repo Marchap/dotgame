@@ -38,22 +38,6 @@ function create_T(num){
 	return board;
 }
 
-function check_score(){
-	var sides=0;
-
-	// for(var i = 0;i<board.length;i++){
-	// 	for(var j = 0;j<board.length;j++){
-	// 		for(var prop in board[i][j]){
-	// 			sides+=board[i][j].prop;
-	// 		}
-	// 	}
-	// }
-	for(prop in board){
-		sides+=board[prop];
-	}
-	alert(sides);
-}
-
 function check_open(dots){
 	var sides = 0;
 	for(var prop in dots){
@@ -63,14 +47,7 @@ function check_open(dots){
 	}
 	$("#font_color").html("check_open: "+dots.tag+","+sides)
 	switch(dots.tag){
-		case '#a1':
-		if(sides!=2){
-			return 1;
-			 break;
-		}
-		else{
-			return 0;
-		}
+		case '#a1':if(sides!=2){return 1;break;}else{return 0;}
 		case '#a2':if(sides!=3){return 1;break;}else{return 0;}
 		case '#a3':if(sides!=2){return 1;break;}else{return 0;}
 		case '#b1':if(sides!=3){return 1;break;}else{return 0;}
@@ -273,14 +250,22 @@ function find_available(dots){
 	// };
 }
 
-function confirm_available(dots,avail){
+function check_score(p){
+	
+
+	if(board[0][0].rside && board[0][0].lower && board[1][0].rside && board[1][1].upper){
+
+	}
+}
+
+function confirm_available(avail){
 	for(var i = 0;i<board.length;i++){
 		for(var j = 0; j<board.length;j++){
 			if(board[i][j].tag==avail.tag){
 				if(board[i][j][avail.side]==0){
-					//$("#font_color").append(","+board[i][j][avail.side])
 					board[i][j][avail.side]=1;
 					reciprocate(avail);
+					check_score();
 					//drawline(dots);
 					return 1;
 				}
@@ -291,17 +276,17 @@ function confirm_available(dots,avail){
 	}
 }
 
-function reciprocate(avail){
+function reciprocate(chosen){//chosen is dot(object)
 	for(var i = 0;i<board.length;i++){
 		for(var j = 0; j<board.length;j++){
 			if(prev_choice==board[i][j].tag){
-				if(avail.side=="rside"){
+				if(chosen.side=="rside"){
 					board[i][j].lside=1;
 				}
-				else if(avail.side=="lside"){
+				else if(chosen.side=="lside"){
 					board[i][j].rside=1;
 				}
-				else if(avail.side=="upper"){
+				else if(chosen.side=="upper"){
 					board[i][j].lower=1;
 				}
 				else{
@@ -315,9 +300,16 @@ function reciprocate(avail){
 function drawline(dots){
 	var dot1 = dots.split("#")
 	var dot2 = prev_choice.split("#")
-	$("#"+dot1[1]+"-"+dot2[1]).css('z-index',1);
-	$("#"+dot1[1]+"-"+dot2[1]).toggle('fast');
-	$("#blah").html("<br>"+dot1[1])
+	var line_color = (player == 1 ? "#5CE68A" : "#000000")
+	if($("#"+dot1[1]+"-"+dot2[1]).is("div")){
+		$("#"+dot1[1]+"-"+dot2[1]).css('color',line_color)
+		$("#"+dot1[1]+"-"+dot2[1]).fadeToggle('fast');
+	}
+	else if($("#"+dot2[1]+"-"+dot1[1]).is("div")){
+		$("#"+dot2[1]+"-"+dot1[1]).css('color',line_color)
+		$("#"+dot2[1]+"-"+dot1[1]).fadeToggle('fast');
+	}
+	$("#what").html("#"+dot1[1]+"-"+dot2[1]+", "+ line_color)
 }
 
 function display(table){
@@ -344,21 +336,19 @@ function select_dots(dots){
 						choice=0;
 						($("#blah").html()=="Choice 0") ? $("#blah").html("Choice 1") : $("#blah").html("Choice 0");
 					}
-
-					for(var k = 0;k<available.length;k++){//available[k] is the available dot(object) that was chosen on second choice
-						if(dots==available[k].tag){
-							confirm=confirm_available(dots,available[k]);
+					for(var k = 0;k<available.length;k++){					//available is the list of available dots(object)
+						if(dots==available[k].tag){							//if(the dot chosen == an available dot)
+							confirm=confirm_available(available[k],board[i][j]);	//available[k] is the second chosen AVAILABLE dot
 							if (confirm){
-								//$("#font_color").html(available[k].side+","+available[k].tag+","+confirm);
-								$(dots).css('color','white');
+								drawline(dots);
+								$(dots).css('color','black');
+								$(prev_choice).css('color','black')
 								choice=0;
 								($("#blah").html()=="Choice 0") ? $("#blah").html("Choice 1") : $("#blah").html("Choice 0");
-
 								$('.left div').css('opacity',1);
 								$('.middle div').css('opacity',1);
 								$('.right div').css('opacity',1);
-								switchplayer();
-								//check_score();
+								switchplayer();							
 							}
 						}
 					}
@@ -366,16 +356,13 @@ function select_dots(dots){
 			}
 			else{
 				if(dots==board[i][j].tag){
-					$("#what").html(check_open(board[i][j]))
 					if(check_open(board[i][j])){
 						confirm=find_available(dots);
 						if (confirm){
-							$(dots).css('color','white');
+							$(dots).css('color','#E62E00');
 							prev_choice = dots;
 							choice=1;
 							($("#blah").html()=="Choice 0") ? $("#blah").html("Choice 1") : $("#blah").html("Choice 0");
-
-
 						}
 					}
 				}	
@@ -383,7 +370,6 @@ function select_dots(dots){
 			
 		}
 	};
-//$("#blah").html(choice)
 }
 
 var board = create_T(3);
@@ -391,6 +377,8 @@ var player = 1;
 var choice = 0;
 var prev_choice = "";
 var available= [];
+var play1_score=0;
+var play2_score=0;
 
 $(document).ready(function(){
 
@@ -398,10 +386,10 @@ $(document).ready(function(){
 	$("body").click(function(event){
 		var pos = event.target.id
 		var code = pos.split("");
-		//$("#what").html("clicked:"+code);
 
 		select_dots("#"+pos);
-		
+
+
 		$("#error").html("");
 
 		for (var i = 0; i < board.length; i++) {
