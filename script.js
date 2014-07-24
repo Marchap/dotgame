@@ -1,19 +1,20 @@
 
-
-
-function dot(){
+//objects used in a matrix to resemble the dots in DOM
+function dot(){	
 	this.upper=0;
 	this.rside=0;
 	this.lower=0;
 	this.lside=0;
 }
 
-function available_dot(){
+//used to list the available dots around the selected dot
+function available_dot(){x
 	this.side="";
 	this.tag="";
 }
 
-function create_T(num){
+//create table
+function create_T(num){		
 	var board = new Array(num);
 
 	for (var i = 0; i < board.length; i++){
@@ -37,6 +38,7 @@ function create_T(num){
 	return board;
 }
 
+//used to count open sides of the first selected dot
 function check_open(dots){
 	var sides = 0;
 	for(var prop in dots){
@@ -63,8 +65,11 @@ function switchplayer(){
 	($("#indicate").html()=="Player 1") ? $("#indicate").html("Player 2") : $("#indicate").html("Player 1");
 }
 
+//uses the dot selected to find available dots nearby
 function find_available(dots){
+	//blank array to house the id's of available dots
 	available = new Array();
+	//temporary variables
 	var aside ="";
 	var atag = "";
 			if(dots.charAt(1)=="a"){
@@ -249,6 +254,7 @@ function find_available(dots){
 	// };
 }
 
+//IN PROGRESS -- thoughts: counting the sides that create a cell-- issues: if a cell is already claimed
 function check_score(p){
 	
 
@@ -257,6 +263,7 @@ function check_score(p){
 	}
 }
 
+//Perhaps redundant -- 3rd and last block used to be certain a line is to be made.
 function confirm_available(avail){
 	for(var i = 0;i<board.length;i++){
 		for(var j = 0; j<board.length;j++){
@@ -275,7 +282,8 @@ function confirm_available(avail){
 	}
 }
 
-function reciprocate(chosen){//chosen is dot(object)
+//Occupying the side of the first dot(board[i][j]) relative to the second dot(chosen).
+function reciprocate(chosen){
 	for(var i = 0;i<board.length;i++){
 		for(var j = 0; j<board.length;j++){
 			if(prev_choice==board[i][j].tag){
@@ -296,10 +304,13 @@ function reciprocate(chosen){//chosen is dot(object)
 	}
 }
 
+//toggling the appropriate line that is made in DOM.
 function drawline(dots){
 	var dot1 = dots.split("#")
 	var dot2 = prev_choice.split("#")
 	var line_color = (player == 1 ? "#5CE68A" : "#000000")
+	
+	//if order differs (a1-b1) or (b1-a1)
 	if($("#"+dot1[1]+"-"+dot2[1]).is("div")){
 		$("#"+dot1[1]+"-"+dot2[1]).css('color',line_color)
 		$("#"+dot1[1]+"-"+dot2[1]).fadeToggle('fast');
@@ -311,6 +322,7 @@ function drawline(dots){
 	$("#what").html("#"+dot1[1]+"-"+dot2[1]+", "+ line_color)
 }
 
+//created to display the 2-d array of "dots" -- could not make it work through function -- created it in DOM ready.click
 function display(table){
 	$("#error").html("");
 	for (var i = 0; i < table.length; i++) {
@@ -321,12 +333,16 @@ function display(table){
 	 }; 	
 }
 
+//pretty much the backbone of selecting dots to making a line
 function select_dots(dots){
 	var confirm = 0;
 	for (var i = 0; i < board.length; i++){
 		for(var j = 0; j<board.length;j++){
+			
+			//if first choice has been picked
 			if(choice!=0){
 				if(dots==board[i][j].tag){
+					//if second choice == first choice:return to normal
 					if(dots==prev_choice){
 						$(dots).css('color','black');
 						$('.left div').css('opacity',1);
@@ -335,9 +351,16 @@ function select_dots(dots){
 						choice=0;
 						($("#blah").html()=="Choice 0") ? $("#blah").html("Choice 1") : $("#blah").html("Choice 0");
 					}
-					for(var k = 0;k<available.length;k++){					//available is the list of available dots(object)
-						if(dots==available[k].tag){							//if(the dot chosen == an available dot)
-							confirm=confirm_available(available[k],board[i][j]);	//available[k] is the second chosen AVAILABLE dot
+					//searching the array of available dots for your second selection
+					for(var k = 0;k<available.length;k++){
+						
+						//if found
+						if(dots==available[k].tag){	
+							
+							//make sure
+							confirm=confirm_available(available[k],board[i][j]);
+							
+							//create line & switch player & reset
 							if (confirm){
 								drawline(dots);
 								$(dots).css('color','black');
@@ -353,9 +376,15 @@ function select_dots(dots){
 					}
 				}
 			}
+			
+			//if first choice
 			else{
 				if(dots==board[i][j].tag){
+					
+					//check if dot is available
 					if(check_open(board[i][j])){
+						
+						//finds available dots: returns 1/0 to break loop
 						confirm=find_available(dots);
 						if (confirm){
 							$(dots).css('color','#E62E00');
@@ -371,6 +400,7 @@ function select_dots(dots){
 	};
 }
 
+//global variables
 var board = create_T(3);
 var player = 1;
 var choice = 0;
@@ -379,9 +409,8 @@ var available= [];
 var play1_score=0;
 var play2_score=0;
 
+
 $(document).ready(function(){
-
-
 	$("body").click(function(event){
 		var pos = event.target.id
 		var code = pos.split("");
