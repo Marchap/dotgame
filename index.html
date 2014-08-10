@@ -9,20 +9,37 @@
     {{outlet}}
   </div>
 </script>
-  <script type="text/x-handlebars" id="index">
+  <script type="text/x-handlebars" id="game">
     {{#each rows}} 
       <div class="row">
-        {{#each square}}
-          <div class="col-xs-2">
-          <div class="NE" {{action 'selectDot' square "NE"}}></div>
-          <div class="NW"{{action 'selectDot' square "NW"}}></div>
-          <div class="SW" {{action 'selectDot' square "SW"}}></div>
-          <div class="SE" {{action 'selectDot' square "SE"}}></div>
+        {{#each}}
+          <div class="col-xs-2 col-xs-height" {{bind-attr class="top:top bottom:bottom left:left right:right" }}>
+          <div class="NE" {{bind-attr class="this.NE.checked:highlighted"}} {{action 'selectDot' this "NE"}}></div>
+          <div class="NW" {{bind-attr class="this.NW.checked:highlighted"}} {{action 'selectDot' this "NW"}}></div>
+          <div class="SW" {{bind-attr class="this.SW.checked:highlighted"}} {{action 'selectDot' this "SW"}}></div>
+          <div class="SE" {{bind-attr class="this.SE.checked:highlighted"}} {{action 'selectDot' this "SE"}}></div>
+          {{#if claimed}}
+            {{claimed}}
+          {{else}}
+            {{index}}
+          {{/if}}
           </div>
         {{/each}}
       </div>
       {{/each}}
   </script>
+  <script type="text/x-handlebars" id="index">
+    {{#if player}} 
+      {{#link-to "games.new" tagName="button"}} Start New Game {{/link-to}}
+      {{#each game in games}}
+        {{#link-to "games.show" game tagName="button"}}{{gameName}}{{/link-to}}
+        {{/each}}
+     {{else}}
+      {{#link-to "games.new" tagName="button"}} Sign Up!{{/link-to}}
+      {{/if}}
+
+      </script>
+
   <script src="js/libs/jquery-1.10.2.js"></script>
   <script src="js/libs/handlebars-1.1.2.js"></script>
   <script src="js/libs/ember-1.6.1.js"></script>
